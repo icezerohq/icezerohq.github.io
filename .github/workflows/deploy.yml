@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -9,28 +9,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Enable corepack
+      # ✅ 关键：避免 pnpm / corepack 版本坑
+      - name: Enable Corepack
         run: corepack enable
 
+      # ✅ Node 22（解决 node:sqlite / pnpm 11 不兼容问题）
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
+      # ✅ 锁定稳定 pnpm 版本（不要用 11）
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
 
-      - name: Install deps
+      # ✅ 安装依赖（CI 模式）
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # ✅ 构建项目（Astro/Vite/React 都通用）
       - name: Build
         run: pnpm build
 
-      - uses: actions/upload-pages-artifact@v3
+      # ✅ 上传构建产物（Vite/Astro 默认 dist）
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
