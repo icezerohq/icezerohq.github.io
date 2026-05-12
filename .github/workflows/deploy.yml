@@ -12,32 +12,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ✅ 关键：避免 pnpm / corepack 版本坑
-      - name: Enable Corepack
-        run: corepack enable
-
-      # ✅ Node 22（解决 node:sqlite / pnpm 11 不兼容问题）
+      # Node 环境
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
 
-      # ✅ 锁定稳定 pnpm 版本（不要用 11）
+      # pnpm（稳定版本）
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
 
-      # ✅ 安装依赖（CI 模式）
+      # 安装依赖
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # ✅ 构建项目（Astro/Vite/React 都通用）
+      # ⭐ 关键：初始化 GitHub Pages 环境
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # 构建项目
       - name: Build
         run: pnpm build
 
-      # ✅ 上传构建产物（Vite/Astro 默认 dist）
+      # 上传构建产物
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
