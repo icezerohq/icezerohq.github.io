@@ -1,5 +1,7 @@
 ---
 import { themeConfig } from '@/config'
+import AssistantMascot from './AssistantMascot.astro'
+import MotionMedia from './MotionMedia.astro'
 const today = new Date()
 ---
 
@@ -16,6 +18,23 @@ const today = new Date()
       Powered by{' '}
       <a href="https://astro.build">Astro</a> &{' '}
       <a href="https://github.com/the3ash/astro-chiri">Chiri</a>
+      <AssistantMascot />
+      {
+        /*
+        <MyComponent />
+      */
+      }
+      {
+        /*
+      <div class="gif-wrap">
+        <MotionMedia
+          src="/gifs/640.gif"
+          alt="demo"
+          width={50}
+        />
+      </div>
+      */
+      }
     </div>
   </div>
 </footer>
@@ -55,5 +74,9 @@ const today = new Date()
 
   footer a:hover {
     color: var(--text-primary);
+  }
+  .gif-wrap {
+    display: flex;
+    align-items: center;
   }
 </style>

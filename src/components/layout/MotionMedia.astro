@@ -1,0 +1,86 @@
+---
+interface Props {
+  src: string
+  mp4?: string
+
+  alt?: string
+  poster?: string
+
+  width?: number | string
+  height?: number | string
+
+  class?: string
+
+  autoplay?: boolean
+  muted?: boolean
+  loop?: boolean
+  controls?: boolean
+}
+
+const {
+  src,
+  mp4,
+
+  alt = '',
+  poster = '',
+
+  width,
+  height,
+
+  class: className = '',
+
+  autoplay = true,
+  muted = true,
+  loop = true,
+  controls = false
+} = Astro.props
+
+const isVideo = src.endsWith('.webm') || src.endsWith('.mp4')
+---
+
+{
+  isVideo ? (
+    <video
+      autoplay={autoplay}
+      muted={muted}
+      loop={loop}
+      controls={controls}
+      playsinline
+      preload="metadata"
+      poster={poster}
+      aria-label={alt}
+      class={`motion-media ${className}`}
+      style={{
+        width: typeof width === 'number' ? `${width}px` : width,
+        height: typeof height === 'number' ? `${height}px` : height
+      }}
+    >
+      <source src={src} type={src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
+
+      {mp4 && <source src={mp4} type="video/mp4" />}
+    </video>
+  ) : (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      class={`motion-media ${className}`}
+      style={{
+        width: typeof width === 'number' ? `${width}px` : width,
+        height: typeof height === 'number' ? `${height}px` : height
+      }}
+    />
+  )
+}
+
+<style>
+  .motion-media {
+    display: block;
+
+    max-width: 100%;
+
+    object-fit: cover;
+
+    vertical-align: middle;
+  }
+</style>
