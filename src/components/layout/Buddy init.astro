@@ -1,0 +1,138 @@
+---
+const buddies = [
+  {
+    face: '( •ᴗ• )',
+    text: '今天也要好好写代码~'
+  },
+
+  {
+    face: '(⌐■_■)',
+    text: 'Lighthouse 100 分稳了'
+  },
+
+  {
+    face: '(－_－) zzZ',
+    text: '构建有点慢...'
+  },
+
+  {
+    face: '=＾● ⋏ ●＾=',
+    text: '发现新的 bug！'
+  },
+
+  {
+    face: '(╥﹏╥)',
+    text: 'TypeScript 又报错了'
+  }
+]
+
+const colors = ['#ffcc70', '#7dd3fc', '#f9a8d4', '#86efac', '#c4b5fd']
+
+const buddy = buddies[Math.floor(Math.random() * buddies.length)]
+
+const color = colors[Math.floor(Math.random() * colors.length)]
+---
+
+<div class="buddy" style={`--buddy-color: ${color}`}>
+  <pre class="face">
+    {buddy.face}
+  </pre>
+
+  <p class="text">
+    {buddy.text}
+  </p>
+</div>
+
+<style>
+  .buddy {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 14px 18px;
+
+    border-radius: 18px;
+
+    border: 1px solid color-mix(in srgb, var(--buddy-color) 30%, transparent);
+
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--buddy-color) 18%, transparent),
+      rgba(255, 255, 255, 0.03)
+    );
+
+    backdrop-filter: blur(12px);
+
+    animation:
+      buddy-enter 0.5s ease,
+      buddy-float 3s ease-in-out infinite;
+
+    transform-origin: center;
+  }
+
+  .face {
+    margin: 0;
+
+    color: var(--buddy-color);
+
+    font-size: 26px;
+
+    line-height: 1;
+
+    animation: wiggle 4s ease-in-out infinite;
+  }
+
+  .text {
+    margin: 0;
+
+    font-size: 14px;
+
+    opacity: 0.85;
+  }
+
+  @keyframes buddy-enter {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes buddy-float {
+    0% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-3px);
+    }
+
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes wiggle {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    25% {
+      transform: rotate(-3deg);
+    }
+
+    75% {
+      transform: rotate(3deg);
+    }
+
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+</style>

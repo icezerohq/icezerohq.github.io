@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="zh" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buddy</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --font-body: 'Satoshi', 'Inter', sans-serif;
+        --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+        --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+        --space-2: 0.5rem;
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --space-8: 2rem;
+        --radius-full: 9999px;
+        --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      :root,
+      [data-theme='light'] {
+        --bg: #f4f3ef;
+        --surface: #f9f8f5;
+        --surface-2: #ffffff;
+        --border: rgba(40, 37, 29, 0.1);
+        --text: #28251d;
+        --text-muted: #7a7974;
+        --text-faint: #bab9b4;
+        --shadow-sm: 0 1px 3px rgba(30, 25, 10, 0.07);
+        --shadow-md: 0 6px 20px rgba(30, 25, 10, 0.09);
+        --shadow-lg: 0 16px 40px rgba(30, 25, 10, 0.13);
+      }
+      [data-theme='dark'] {
+        --bg: #111110;
+        --surface: #1a1917;
+        --surface-2: #212120;
+        --border: rgba(205, 204, 202, 0.08);
+        --text: #cdccca;
+        --text-muted: #797876;
+        --text-faint: #4a4947;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+        --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.35);
+        --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.45);
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        -webkit-font-smoothing: antialiased;
+      }
+      body {
+        min-height: 100dvh;
+        font-family: var(--font-body, sans-serif);
+        color: var(--text);
+        background: var(--bg);
+        transition:
+          background 0.4s ease,
+          color 0.3s ease;
+      }
+      .stage {
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        padding: var(--space-8);
+      }
+      .theme-toggle {
+        position: fixed;
+        top: var(--space-6);
+        right: var(--space-6);
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-full);
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: all var(--transition);
+        box-shadow: var(--shadow-sm);
+        z-index: 100;
+      }
+      .theme-toggle:hover {
+        color: var(--text);
+        box-shadow: var(--shadow-md);
+      }
+      .buddy-scene {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-8);
+      }
+      .buddy-wrap {
+        position: relative;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-3);
+        outline: none;
+      }
+      .buddy-aura {
+        position: absolute;
+        inset: -16px;
+        border-radius: var(--radius-full);
+        opacity: 0;
+        transition: opacity 0.6s ease;
+        pointer-events: none;
+        filter: blur(20px);
+      }
+      .buddy-wrap:hover .buddy-aura,
+      .buddy-wrap.focused .buddy-aura {
+        opacity: 0.55;
+      }
+      .buddy-capsule {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 80px;
+        height: 80px;
+        padding: 0 1.75rem;
+        border-radius: var(--radius-full);
+        cursor: pointer;
+        user-select: none;
+        background: color-mix(in oklch, var(--buddy-color, #7dd3fc) 11%, var(--surface-2));
+        backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid color-mix(in oklch, var(--buddy-color, #7dd3fc) 28%, var(--border));
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.06) inset,
+          var(--shadow-md),
+          0 0 28px -4px color-mix(in oklch, var(--buddy-color, #7dd3fc) 22%, transparent);
+        animation:
+          buddy-enter 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+          buddy-float 5s ease-in-out infinite;
+        transition:
+          transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+          box-shadow 0.3s ease;
+      }
+      .buddy-capsule:hover {
+        transform: scale(1.08) translateY(-2px);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.09) inset,
+          var(--shadow-lg),
+          0 0 48px -4px color-mix(in oklch, var(--buddy-color, #7dd3fc) 40%, transparent);
+      }
+      .buddy-capsule:active {
+        transform: scale(0.94) translateY(1px);
+        transition: transform 0.1s ease;
+      }
+      .buddy-face {
+        font-size: 26px;
+        line-height: 1;
+        color: color-mix(in oklch, var(--buddy-color, #7dd3fc) 75%, var(--text));
+        text-shadow: 0 0 14px color-mix(in oklch, var(--buddy-color, #7dd3fc) 45%, transparent);
+        font-family: var(--font-body);
+        animation: face-breathe 7s ease-in-out infinite;
+      }
+      /* mood — hover 才可见 */
+      .buddy-mood {
+        font-size: var(--text-xs);
+        color: var(--text-faint);
+        letter-spacing: 0.08em;
+        font-weight: 500;
+        opacity: 0;
+        transform: translateY(4px);
+        transition:
+          opacity 0.35s ease,
+          transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .buddy-wrap:hover .buddy-mood,
+      .buddy-wrap.focused .buddy-mood {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .buddy-status {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        width: 10px;
+        height: 10px;
+        border-radius: var(--radius-full);
+        background: color-mix(in oklch, var(--buddy-color, #7dd3fc) 70%, white);
+        border: 2px solid var(--surface-2);
+        animation: status-pulse 3s ease-in-out infinite;
+      }
+      /* speech — hover 才可见 */
+      .buddy-speech {
+        position: absolute;
+        bottom: calc(100% + 14px);
+        left: 50%;
+        transform: translateX(-50%) translateY(4px) scale(0.95);
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: var(--space-3) var(--space-4);
+        font-size: var(--text-xs);
+        color: var(--text-muted);
+        white-space: nowrap;
+        box-shadow: var(--shadow-md);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .buddy-speech::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 5px solid transparent;
+        border-top-color: var(--border);
+      }
+      .buddy-speech::before {
+        content: '';
+        position: absolute;
+        top: calc(100% - 1px);
+        left: 50%;
+        transform: translateX(-50%);
+        border: 5px solid transparent;
+        border-top-color: var(--surface-2);
+        z-index: 1;
+      }
+      .buddy-wrap:hover .buddy-speech,
+      .buddy-wrap.focused .buddy-speech {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+      .divider {
+        width: 1px;
+        height: 36px;
+        background: var(--border);
+      }
+      .buddy-selector {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-4);
+      }
+      .selector-label {
+        font-size: var(--text-xs);
+        color: var(--text-faint);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+      .mood-grid {
+        display: flex;
+        gap: var(--space-3);
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .mood-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        height: 36px;
+        padding: 0 var(--space-4);
+        border-radius: var(--radius-full);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        cursor: pointer;
+        font-size: var(--text-xs);
+        color: var(--text-muted);
+        font-family: var(--font-body);
+        font-weight: 500;
+        transition: all var(--transition);
+        box-shadow: var(--shadow-sm);
+      }
+      .mood-chip:hover {
+        color: var(--text);
+        background: var(--surface-2);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+      }
+      .mood-chip.active {
+        color: var(--text);
+        background: color-mix(in oklch, var(--chip-color) 10%, var(--surface-2));
+        border-color: color-mix(in oklch, var(--chip-color) 30%, var(--border));
+        box-shadow:
+          var(--shadow-sm),
+          0 0 0 1px color-mix(in oklch, var(--chip-color) 15%, transparent);
+      }
+      .chip-face {
+        font-size: 14px;
+        line-height: 1;
+      }
+      /* 粒子 — 点击爆发 & 环境漂浮共用同一个类 */
+      .particle {
+        position: absolute;
+        border-radius: var(--radius-full);
+        pointer-events: none;
+        opacity: 0;
+        animation: particle-drift var(--dur, 3s) ease-out forwards;
+      }
+      .ripple-layer {
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius-full);
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .ripple {
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius-full);
+        background: color-mix(in oklch, var(--buddy-color, #7dd3fc) 30%, white);
+        animation: click-ripple 0.5s ease-out forwards;
+      }
+      @keyframes buddy-enter {
+        from {
+          opacity: 0;
+          transform: scale(0.4) translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      @keyframes buddy-float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-7px);
+        }
+      }
+      @keyframes face-breathe {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.04);
+        }
+      }
+      @keyframes face-wiggle {
+        0%,
+        88%,
+        100% {
+          transform: rotate(0) scale(1);
+        }
+        91% {
+          transform: rotate(-10deg) scale(1.12);
+        }
+        94% {
+          transform: rotate(10deg) scale(1.12);
+        }
+        97% {
+          transform: rotate(-5deg) scale(1.06);
+        }
+      }
+      @keyframes status-pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.5);
+          opacity: 0.55;
+        }
+      }
+      @keyframes particle-drift {
+        0% {
+          opacity: 0;
+          transform: translateY(0) translateX(0) scale(1);
+        }
+        15% {
+          opacity: var(--peak-opacity, 0.8);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-52px) translateX(var(--drift, 10px)) scale(0.2);
+        }
+      }
+      @keyframes click-ripple {
+        0% {
+          transform: scale(0.6);
+          opacity: 0.55;
+        }
+        100% {
+          transform: scale(2.4);
+          opacity: 0;
+        }
+      }
+      .buddy-face.wiggling {
+        animation:
+          face-wiggle 0.7s ease-in-out,
+          face-breathe 7s ease-in-out infinite 0.7s;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="theme-toggle" data-theme-toggle aria-label="切换主题">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5" />
+        <path
+          d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+        />
+      </svg>
+    </button>
+    <main class="stage">
+      <div class="buddy-scene">
+        <div class="buddy-wrap" id="wrap" tabindex="0" role="button" aria-label="你的 Buddy">
+          <div class="buddy-aura" id="aura"></div>
+          <div class="buddy-capsule" id="capsule" style="--buddy-color: #7dd3fc">
+            <div class="ripple-layer" id="rippleLayer"></div>
+            <pre class="buddy-face" id="face">(&#x2310;&#x25A0;_&#x25A0;)</pre>
+            <div class="buddy-status"></div>
+          </div>
+          <div class="buddy-mood" id="mood">cool &amp; composed</div>
+          <div class="buddy-speech" id="speech">点一下试试？</div>
+        </div>
+        <div class="divider"></div>
+        <div class="buddy-selector">
+          <span class="selector-label">选一个心情</span>
+          <div class="mood-grid" id="grid"></div>
+        </div>
+      </div>
+    </main>
+    <script>
+      const B = [
+        { face: '( •ᴗ• )', color: '#f9a8d4', mood: 'cheerful & warm', speech: '今天也很不错呢 ✦', label: '开心' },
+        { face: '(⌐■_■)', color: '#7dd3fc', mood: 'cool & composed', speech: '一切尽在掌握。', label: '酷' },
+        { face: '(－_－) zzZ', color: '#c4b5fd', mood: 'drifting away…', speech: '等等，我刚睡了吗…', label: '困' },
+        { face: '=＾●⋏●＾=', color: '#86efac', mood: 'curious & playful', speech: '喵？你在看我吗？', label: '喵' },
+        { face: '(╥︹╥)', color: '#ffcc70', mood: 'a bit emotional…', speech: '没什么，只是有点感慨。', label: '伤感' }
+      ]
+      let cur = 1,
+        idleTimer = null
+      const capsule = document.getElementById('capsule'),
+        face = document.getElementById('face'),
+        mood = document.getElementById('mood'),
+        speech = document.getElementById('speech'),
+        aura = document.getElementById('aura'),
+        wrap = document.getElementById('wrap'),
+        grid = document.getElementById('grid')
+
+      function apply(i, anim = true) {
+        const b = B[i]
+        cur = i
+        capsule.style.setProperty('--buddy-color', b.color)
+        aura.style.background = b.color
+        face.textContent = b.face
+        mood.textContent = b.mood
+        speech.textContent = b.speech
+        if (anim) {
+          face.classList.remove('wiggling')
+          void face.offsetWidth
+          face.classList.add('wiggling')
+        }
+        document.querySelectorAll('.mood-chip').forEach((c, j) => {
+          c.classList.toggle('active', j === i)
+          c.style.setProperty('--chip-color', B[j].color)
+        })
+        clearTimeout(idleTimer)
+        idleTimer = setTimeout(function loop() {
+          face.classList.remove('wiggling')
+          void face.offsetWidth
+          face.classList.add('wiggling')
+          idleTimer = setTimeout(loop, 8000)
+        }, 8000)
+      }
+
+      function doRipple() {
+        const l = document.getElementById('rippleLayer')
+        l.innerHTML = ''
+        const el = document.createElement('div')
+        el.className = 'ripple'
+        l.appendChild(el)
+        el.addEventListener('animationend', () => el.remove())
+      }
+
+      // 点击爆发粒子 — 多、快、大
+      function burstParticles() {
+        const color = B[cur].color
+        for (let i = 0; i < 7; i++) {
+          const p = document.createElement('div')
+          p.className = 'particle'
+          const size = 3 + Math.random() * 3
+          p.style.cssText = `
+      background:${color};
+      width:${size}px; height:${size}px;
+      left:${34 + Math.random() * 32}%;
+      top:${30 + Math.random() * 28}%;
+      --drift:${Math.random() * 38 - 19}px;
+      --dur:${2.4 + Math.random() * 0.8}s;
+      --peak-opacity:0.85;
+      animation-delay:${i * 0.05}s;
+    `
+          wrap.appendChild(p)
+          p.addEventListener('animationend', () => p.remove())
+        }
+      }
+
+      // 环境漂浮粒子 — 少、慢、小、若隐若现
+      function ambientParticles() {
+        const color = B[cur].color
+        const count = Math.random() > 0.45 ? 2 : 1
+        for (let i = 0; i < count; i++) {
+          const p = document.createElement('div')
+          p.className = 'particle'
+          const size = 1.5 + Math.random() * 2.5
+          p.style.cssText = `
+      background:${color};
+      width:${size}px; height:${size}px;
+      left:${28 + Math.random() * 44}%;
+      top:${32 + Math.random() * 30}%;
+      --drift:${Math.random() * 22 - 11}px;
+      --dur:${3.5 + Math.random() * 2}s;
+      --peak-opacity:0.45;
+      animation-delay:${i * 0.2}s;
+    `
+          wrap.appendChild(p)
+          p.addEventListener('animationend', () => p.remove())
+        }
+        setTimeout(ambientParticles, 1800 + Math.random() * 1400)
+      }
+
+      capsule.addEventListener('click', () => {
+        doRipple()
+        burstParticles()
+        apply((cur + 1) % B.length)
+      })
+
+      B.forEach((b, i) => {
+        const chip = document.createElement('button')
+        chip.className = 'mood-chip' + (i === cur ? ' active' : '')
+        chip.style.setProperty('--chip-color', b.color)
+        chip.innerHTML = `<span class="chip-face">${b.face.slice(0, 7)}</span><span>${b.label}</span>`
+        chip.addEventListener('click', () => {
+          doRipple()
+          burstParticles()
+          apply(i)
+        })
+        grid.appendChild(chip)
+      })
+
+      wrap.addEventListener('focus', () => wrap.classList.add('focused'))
+      wrap.addEventListener('blur', () => wrap.classList.remove('focused'))
+      wrap.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          doRipple()
+          burstParticles()
+          apply((cur + 1) % B.length)
+        }
+      })
+
+      ;(function () {
+        const toggle = document.querySelector('[data-theme-toggle]'),
+          root = document.documentElement
+        let dark = true
+        toggle.addEventListener('click', () => {
+          dark = !dark
+          root.setAttribute('data-theme', dark ? 'dark' : 'light')
+          toggle.innerHTML = dark
+            ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+            : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+        })
+      })()
+
+      apply(1, false)
+      ambientParticles() // 启动环境粒子
+    </script>
+  </body>
+</html>

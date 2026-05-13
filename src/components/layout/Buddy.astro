@@ -1,0 +1,126 @@
+---
+const buddies = [
+  {
+    face: '( •ᴗ• )',
+    text: '今天也要好好写代码~'
+  },
+
+  {
+    face: '(⌐■_■)',
+    text: 'Lighthouse 100 分稳了'
+  },
+
+  {
+    face: '(－_－) zzZ',
+    text: '构建有点慢...'
+  },
+
+  {
+    face: '=＾● ⋏ ●＾=',
+    text: '发现新的 bug！'
+  },
+
+  {
+    face: '(╥﹏╥)',
+    text: 'TypeScript 又报错了'
+  }
+]
+
+const colors = ['#ffcc70', '#7dd3fc', '#f9a8d4', '#86efac', '#c4b5fd']
+
+const buddy = buddies[Math.floor(Math.random() * buddies.length)]
+
+const color = colors[Math.floor(Math.random() * colors.length)]
+---
+
+<div class="buddy" style={`--buddy-color: ${color}`}>
+  <pre class="face">
+    {buddy.face}
+  </pre>
+
+  <p class="text">
+    {buddy.text}
+  </p>
+</div>
+
+<style>
+  .buddy {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    border-radius: 24px; /* 更圆润的圆角 */
+
+    /* 核心逻辑：使用颜色变量生成柔和背景 */
+    background: color-mix(in srgb, var(--buddy-color) 12%, rgba(255, 255, 255, 0.6));
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+
+    /* 细边框增加精致感 */
+    border: 1.5px solid color-mix(in srgb, var(--buddy-color) 30%, transparent);
+
+    /* 弥散阴影 */
+    box-shadow:
+      0 8px 20px -6px color-mix(in srgb, var(--buddy-color) 25%, transparent),
+      0 4px 10px -4px color-mix(in srgb, var(--buddy-color) 15%, transparent);
+
+    animation:
+      buddy-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      /* 使用更优雅的贝塞尔曲线 */ buddy-float 4s ease-in-out infinite;
+  }
+
+  .face {
+    margin: 0;
+    color: var(--buddy-color);
+    font-size: 24px;
+    line-height: 1;
+    /* 让表情稍微有一点点外发光 */
+    text-shadow: 0 0 12px color-mix(in srgb, var(--buddy-color) 40%, transparent);
+    animation: wiggle 4s ease-in-out infinite;
+    font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
+  }
+
+  .text {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500; /* 加粗一点点增加可读性 */
+    color: #334155; /* 使用深灰而非全黑，更有质感 */
+    letter-spacing: 0.02em;
+  }
+
+  /* 进场动画：增加缩放和位移的配合 */
+  @keyframes buddy-enter {
+    from {
+      opacity: 0;
+      transform: scale(0.9) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  /* 悬浮动画：幅度减小，增加平滑度 */
+  @keyframes buddy-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(-5deg) scale(1.05);
+    }
+    75% {
+      transform: rotate(5deg) scale(1.05);
+    }
+  }
+</style>
