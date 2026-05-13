@@ -190,8 +190,13 @@
     }
   }
 </style>
-
 <script>
+  declare global {
+    interface Window {
+      __CHIRI_MASCOT__?: boolean
+    }
+  }
+
   if (!window.__CHIRI_MASCOT__) {
     window.__CHIRI_MASCOT__ = true
 
@@ -199,25 +204,20 @@
 
     if (mascot) {
       const leftEar = mascot.querySelector('.ear-left')
-
       const rightEar = mascot.querySelector('.ear-right')
-
       const eyes = mascot.querySelectorAll('.eye')
 
       const modes = ['mode-awake', 'mode-sleep']
-
       const picked = modes[Math.floor(Math.random() * modes.length)]
-
       mascot.classList.add(picked)
 
+      // ✅ 判空后再定义 twitch
       function twitch() {
+        if (!leftEar || !rightEar) return
         leftEar.classList.add('ear-twitch-left')
-
         rightEar.classList.add('ear-twitch-right')
-
         setTimeout(() => {
           leftEar.classList.remove('ear-twitch-left')
-
           rightEar.classList.remove('ear-twitch-right')
         }, 1100)
       }
@@ -226,7 +226,6 @@
         eyes.forEach((eye) => {
           eye.classList.add('blink')
         })
-
         setTimeout(() => {
           eyes.forEach((eye) => {
             eye.classList.remove('blink')
@@ -235,24 +234,18 @@
       }
 
       twitch()
-
-      setTimeout(() => {
-        blink()
-      }, 1200)
+      setTimeout(() => blink(), 1200)
 
       function loop() {
         const delay = 3000 + Math.random() * 12000
-
         setTimeout(() => {
           const r = Math.random()
-
           if (r < 0.7) {
           } else if (r < 0.9) {
             twitch()
           } else {
             blink()
           }
-
           loop()
         }, delay)
       }
@@ -261,10 +254,7 @@
 
       mascot.addEventListener('mouseenter', () => {
         blink()
-
-        if (Math.random() < 0.5) {
-          twitch()
-        }
+        if (Math.random() < 0.5) twitch()
       })
     }
   }
