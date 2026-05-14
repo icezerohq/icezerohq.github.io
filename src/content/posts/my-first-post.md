@@ -2,7 +2,7 @@
 title: Astro 部署 GitHub Pages 404 问题解决方案（base路径 + Actions配置）
 description: 记录 Astro 项目部署到 GitHub Pages 出现 404、样式丢失、资源路径错误的排查与解决方法
 pubDate: 2026-05-13
-tags: ["Astro", "GitHub Pages", "部署", "404", "base路径", "GitHub Actions"]
+tags: ['Astro', 'GitHub Pages', '部署', '404', 'base路径', 'GitHub Actions']
 ---
 
 这篇记录一下 Astro 项目部署到 GitHub Pages 时遇到的几个典型问题：
@@ -37,11 +37,11 @@ https://username.github.io/repo-name/
 所以必须在 `astro.config.mjs` 中配置 base：
 
 ```js
-import { defineConfig } from "astro/config";
+import { defineConfig } from 'astro/config'
 
 export default defineConfig({
-  base: "/你的仓库名/",
-});
+  base: '/你的仓库名/'
+})
 ```
 
 如果不配置，会出现：
@@ -65,7 +65,7 @@ export default defineConfig({
 解决方式是使用 base 路径：
 
 ```js
-import.meta.env.BASE_URL + "images/xxx.png"
+import.meta.env.BASE_URL + 'images/xxx.png'
 ```
 
 或者统一使用相对 base 的资源路径管理方式。
@@ -109,7 +109,7 @@ GitHub Pages CSS 不生效
 Astro base 配置  
 Astro 静态资源路径错误  
 GitHub Actions Astro 部署  
-Astro 项目上线问题  
+Astro 项目上线问题
 
 ---
 
