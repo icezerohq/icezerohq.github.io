@@ -3,9 +3,7 @@ title: '日更摄影：为什么是今天？'
 pubDate: 2024-05-20
 description: '打破器材焦虑，从身边的第一道光开始。'
 author: 'Your Name'
-image:
-  url: 'https://images.unsplash.com/photo-1452784444945-3f422708fe5e'
-  alt: '相机特写'
+image: 'https://images.unsplash.com/photo-1452784444945-3f422708fe5e'
 tags: ['摄影随笔', '日更']
 ---
 
