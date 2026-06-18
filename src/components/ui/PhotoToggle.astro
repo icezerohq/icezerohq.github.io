@@ -1,0 +1,36 @@
+<a href="/photos" class="photo-toggle" aria-label="Open photos" onclick="console.log('点击相机了')">
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g>
+      <rect x="1" y="2" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"></rect>
+      <path d="M3 4.5H3.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+      <circle cx="6" cy="6.5" r="1.8" stroke="currentColor" stroke-width="1.2"></circle>
+    </g>
+  </svg>
+</a>
+<style>
+  .photo-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--text-primary);
+    opacity: 0.4;
+    transition: opacity 0.2s ease-out;
+    padding: 0;
+    position: relative;
+  }
+
+  .photo-toggle:hover {
+    opacity: 1;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .photo-toggle:hover {
+      opacity: 0.4;
+    }
+  }
+</style>

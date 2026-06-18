@@ -1,28 +1,37 @@
 ---
 import { themeConfig } from '@/config'
 import ThemeToggle from '@/components/ui/ThemeToggle.astro'
+import PhotoToggle from '@/components/ui/PhotoToggle.astro'
 ---
 
 <header>
   <nav>
     <a href="/">{themeConfig.site.title}</a>
-    {themeConfig.general.themeToggle && <ThemeToggle />}
+    <div class="right">
+      {themeConfig.general.themeToggle && <ThemeToggle />}
+      <PhotoToggle />
+      <div></div>
+    </div>
+    <style>
+      header {
+        margin: 0;
+      }
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      header a {
+        font-weight: var(--font-weight-bold);
+        color: var(--text-primary);
+        text-decoration: none;
+        min-width: 3rem;
+        display: inline-block;
+      }
+      .right {
+        display: flex;
+        gap: 10px;
+      }
+    </style>
   </nav>
 </header>
-<style>
-  header {
-    margin: 0;
-  }
-  nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  header a {
-    font-weight: var(--font-weight-bold);
-    color: var(--text-primary);
-    text-decoration: none;
-    min-width: 3rem;
-    display: inline-block;
-  }
-</style>
