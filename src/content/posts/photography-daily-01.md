@@ -1,6 +1,6 @@
 ---
 title: '日更摄影：为什么是今天？'
-pubDate: 2024-05-20
+pubDate: 2026-05-14
 description: '打破器材焦虑，从身边的第一道光开始。'
 author: 'Your Name'
 image: 'https://images.unsplash.com/photo-1452784444945-3f422708fe5e'
