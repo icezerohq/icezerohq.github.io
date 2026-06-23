@@ -65,6 +65,18 @@ export const inspirationPhotos: InspirationPhoto[] = [
 
 export const journalGroups: JournalGroup[] = [
   {
+    title: 'City Stroll',
+    location: 'Downtown Ningbo',
+    date: '2026-06-23',
+    icon: timelineIconPresets.city,
+    description:
+      'Spent the day wandering through busy streets, browsing local shops, and enjoying a quiet coffee while watching city life unfold.',
+    images: [
+      '/pro/img-17523992258319683965cb3a53829d45c99cb61148da33d9d49ee8ce.jpg',
+      '/pro/yunshuo-qu-bqxIzrYzGaI-unsplash.jpg'
+    ]
+  },
+  {
     title: 'Botanical Garden',
     location: 'Ningbo',
     date: '2026-03-07',
